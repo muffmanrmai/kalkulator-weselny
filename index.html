@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kalkulator Weselny</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Georgia, 'Times New Roman', serif;
+      background: #faf8f5;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+      color: #3d2b1f;
+    }
+
+    .card {
+      background: #fff;
+      border: 1px solid #e8e0d8;
+      border-radius: 16px;
+      padding: 2.5rem 2rem;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid #f0ebe4;
+    }
+
+    .header h1 {
+      font-size: 32px;
+      font-weight: 400;
+      color: #3d2b1f;
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+    }
+
+    .header p {
+      font-size: 14px;
+      color: #9b8577;
+      font-family: system-ui, sans-serif;
+    }
+
+    .divider {
+      width: 40px;
+      height: 1px;
+      background: #c9a87a;
+      margin: 12px auto;
+    }
+
+    .section { margin-bottom: 1.75rem; }
+
+    .section-title {
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #9b8577;
+      margin-bottom: 14px;
+      font-family: system-ui, sans-serif;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    @media (max-width: 500px) {
+      .row { grid-template-columns: 1fr; }
+    }
+
+    .field { display: flex; flex-direction: column; gap: 7px; }
+
+    .field label {
+      font-size: 13px;
+      color: #5c4033;
+      font-family: system-ui, sans-serif;
+    }
+
+    .field input[type="range"] {
+      width: 100%;
+      accent-color: #b8956a;
+      cursor: pointer;
+    }
+
+    .field select {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid #e0d6cc;
+      border-radius: 8px;
+      font-size: 14px;
+      color: #3d2b1f;
+      background: #faf8f5;
+      font-family: system-ui, sans-serif;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .field select:focus { border-color: #b8956a; }
+
+    .range-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .range-row input { flex: 1; }
+
+    .range-val {
+      font-size: 14px;
+      font-weight: 500;
+      color: #3d2b1f;
+      min-width: 80px;
+      text-align: right;
+      font-family: system-ui, sans-serif;
+    }
+
+    .summary {
+      background: #faf8f5;
+      border: 1px solid #e8e0d8;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-top: 1.75rem;
+    }
+
+    .summary-title {
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #9b8577;
+      margin-bottom: 1rem;
+      font-family: system-ui, sans-serif;
+    }
+
+    .sum-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 1rem;
+    }
+
+    @media (max-width: 400px) {
+      .sum-grid { grid-template-columns: 1fr; }
+    }
+
+    .sum-item {
+      background: #fff;
+      border-radius: 8px;
+      padding: 10px 14px;
+      border: 1px solid #f0ebe4;
+    }
+
+    .sum-item .lbl {
+      font-size: 11px;
+      color: #9b8577;
+      margin-bottom: 4px;
+      font-family: system-ui, sans-serif;
+    }
+
+    .sum-item .val {
+      font-size: 16px;
+      font-weight: 500;
+      color: #3d2b1f;
+      font-family: system-ui, sans-serif;
+    }
+
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding-top: 1rem;
+      border-top: 1px solid #e8e0d8;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .total-lbl {
+      font-size: 14px;
+      color: #5c4033;
+      font-family: system-ui, sans-serif;
+    }
+
+    .total-val {
+      font-size: 28px;
+      font-weight: 500;
+      color: #8b5e3c;
+      font-family: system-ui, sans-serif;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 2rem;
+      font-size: 12px;
+      color: #b8a898;
+      font-family: system-ui, sans-serif;
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <div class="header">
+    <h1>Kalkulator Weselny</h1>
+    <div class="divider"></div>
+    <p>Oszacuj koszt swojego wymarzonego wesela</p>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Podstawowe dane</div>
+    <div class="row">
+      <div class="field">
+        <label>Liczba gości</label>
+        <div class="range-row">
+          <input type="range" id="goscie" min="20" max="300" step="5" value="100" oninput="calc()">
+          <span class="range-val" id="goscie-val">100 os.</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Miesiąc ślubu</label>
+        <select id="miesiac" onchange="calc()">
+          <option value="1.3">Czerwiec</option>
+          <option value="1.3">Lipiec</option>
+          <option value="1.2">Sierpień</option>
+          <option value="1.0" selected>Wrzesień</option>
+          <option value="0.9">Październik</option>
+          <option value="0.85">Listopad</option>
+          <option value="0.8">Grudzień / Styczeń</option>
+          <option value="0.9">Marzec – Maj</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Catering i napoje</div>
+    <div class="row">
+      <div class="field">
+        <label>Stawka cateringowa (zł / os.)</label>
+        <div class="range-row">
+          <input type="range" id="catering" min="150" max="600" step="10" value="280" oninput="calc()">
+          <span class="range-val" id="catering-val">280 zł</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Otwarty bar</label>
+        <select id="bar" onchange="calc()">
+          <option value="0">Bez baru / własny alkohol</option>
+          <option value="80" selected>Podstawowy (80 zł / os.)</option>
+          <option value="140">Rozszerzony (140 zł / os.)</option>
+          <option value="200">Premium (200 zł / os.)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Venue i oprawa muzyczna</div>
+    <div class="row">
+      <div class="field">
+        <label>Wynajem sali (zł)</label>
+        <div class="range-row">
+          <input type="range" id="sala" min="2000" max="30000" step="500" value="8000" oninput="calc()">
+          <span class="range-val" id="sala-val">8 000 zł</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Oprawa muzyczna</label>
+        <select id="muzyka" onchange="calc()">
+          <option value="1500">DJ (1 500 zł)</option>
+          <option value="3500" selected>Mały zespół (3 500 zł)</option>
+          <option value="6000">Duży zespół (6 000 zł)</option>
+          <option value="10000">Orkiestra (10 000 zł)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Fotografia i dekoracje</div>
+    <div class="row">
+      <div class="field">
+        <label>Fotograf + film (zł)</label>
+        <div class="range-row">
+          <input type="range" id="foto" min="2000" max="20000" step="500" value="5000" oninput="calc()">
+          <span class="range-val" id="foto-val">5 000 zł</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Dekoracje i kwiaty (zł)</label>
+        <div class="range-row">
+          <input type="range" id="deko" min="1000" max="20000" step="500" value="4000" oninput="calc()">
+          <span class="range-val" id="deko-val">4 000 zł</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Para młoda</div>
+    <div class="row">
+      <div class="field">
+        <label>Suknia ślubna (zł)</label>
+        <div class="range-row">
+          <input type="range" id="suknia" min="500" max="15000" step="200" value="3000" oninput="calc()">
+          <span class="range-val" id="suknia-val">3 000 zł</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Tort weselny (zł)</label>
+        <div class="range-row">
+          <input type="range" id="tort" min="500" max="6000" step="100" value="1500" oninput="calc()">
+          <span class="range-val" id="tort-val">1 500 zł</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="summary">
+    <div class="summary-title">Podsumowanie kosztów</div>
+    <div class="sum-grid">
+      <div class="sum-item">
+        <div class="lbl">Catering</div>
+        <div class="val" id="s-catering">—</div>
+      </div>
+      <div class="sum-item">
+        <div class="lbl">Bar / napoje</div>
+        <div class="val" id="s-bar">—</div>
+      </div>
+      <div class="sum-item">
+        <div class="lbl">Sala + muzyka</div>
+        <div class="val" id="s-venue">—</div>
+      </div>
+      <div class="sum-item">
+        <div class="lbl">Foto + dekoracje</div>
+        <div class="val" id="s-foto">—</div>
+      </div>
+      <div class="sum-item">
+        <div class="lbl">Suknia + tort</div>
+        <div class="val" id="s-inne">—</div>
+      </div>
+      <div class="sum-item">
+        <div class="lbl">Korekta sezonowa</div>
+        <div class="val" id="s-sezon">—</div>
+      </div>
+    </div>
+    <div class="total-row">
+      <span class="total-lbl">Szacunkowy koszt całkowity</span>
+      <span class="total-val" id="total">—</span>
+    </div>
+  </div>
+
+  <div class="footer">
+    Wartości są orientacyjne i mogą się różnić w zależności od regionu i oferty dostawców.
+  </div>
+</div>
+
+<script>
+  function fmt(n) {
+    return Math.round(n).toLocaleString('pl-PL') + ' zł';
+  }
+
+  function calc() {
+    const g      = +document.getElementById('goscie').value;
+    const cat    = +document.getElementById('catering').value;
+    const bar    = +document.getElementById('bar').value;
+    const sala   = +document.getElementById('sala').value;
+    const muz    = +document.getElementById('muzyka').value;
+    const foto   = +document.getElementById('foto').value;
+    const deko   = +document.getElementById('deko').value;
+    const suknia = +document.getElementById('suknia').value;
+    const tort   = +document.getElementById('tort').value;
+    const sezon  = +document.getElementById('miesiac').value;
+
+    document.getElementById('goscie-val').textContent  = g + ' os.';
+    document.getElementById('catering-val').textContent = cat + ' zł';
+    document.getElementById('sala-val').textContent    = fmt(sala);
+    document.getElementById('foto-val').textContent    = fmt(foto);
+    document.getElementById('deko-val').textContent    = fmt(deko);
+    document.getElementById('suknia-val').textContent  = fmt(suknia);
+    document.getElementById('tort-val').textContent    = fmt(tort);
+
+    const cCat   = g * cat;
+    const cBar   = g * bar;
+    const cVenue = sala + muz;
+    const cFoto  = foto + deko;
+    const cInne  = suknia + tort;
+    const base   = cCat + cBar + cVenue + cFoto + cInne;
+    const total  = Math.round(base * sezon);
+    const diff   = Math.round(base * sezon - base);
+
+    document.getElementById('s-catering').textContent = fmt(cCat);
+    document.getElementById('s-bar').textContent      = fmt(cBar);
+    document.getElementById('s-venue').textContent    = fmt(cVenue);
+    document.getElementById('s-foto').textContent     = fmt(cFoto);
+    document.getElementById('s-inne').textContent     = fmt(cInne);
+    document.getElementById('s-sezon').textContent    = (diff >= 0 ? '+' : '') + fmt(diff);
+    document.getElementById('total').textContent      = fmt(total);
+  }
+
+  calc();
+</script>
+
+</body>
+</html>
